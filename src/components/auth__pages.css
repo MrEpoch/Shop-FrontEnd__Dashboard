@@ -1,0 +1,36 @@
+.loading__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+}
+
+.login__page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    justify-self: center;
+    align-self: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.login__page__form {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 2rem;
+    border-radius: 10px;
+    max-width: 500px;
+    height: auto;
+    padding: 4rem;
+    background-color: #fff;
+    display: flex;
+}
+
+.error__auth {
+   margin-top: 1rem; 
+   margin-bottom: 1rem;
+}
