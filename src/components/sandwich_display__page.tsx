@@ -1,13 +1,17 @@
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { GetSandwiches } from "../API_Requests";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Alert } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import Sandwich__add from "./create_sandwich__page.tsx";
+
+export const queryClient = new QueryClient();
 
 export default function Sandwich__display() {
-    const [sandwiches, setSandwiches] = useState([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>("");
+
+    const {isLoading, error, data } = useQuery<any[], Error>('sandwiches', GetSandwiches);
 
     const navigate = useNavigate();
 
@@ -16,33 +20,24 @@ export default function Sandwich__display() {
         navigate("/");
     }
 
-    async function LoadSandwiches() {
-        setLoading(true);
-        try {
-            const sandwiches_response = await GetSandwiches();
-            setSandwiches(sandwiches_response);
-            setLoading(false);
-            return;
-        } catch (e) {
-            setLoading(false);
-            setError("Error loading sandwiches");
-            return;
-        }
+    if (isLoading) {
+        return (
+            <div className="loading__container">
+                <CircularProgress />
+            </div>
+        )
     }
-    useMemo(() => {
-        LoadSandwiches();
-    }, []);
 
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             {loading ? (<div className="loading__container"><CircularProgress /></div>) :
                 (<section className="sandwich__display__page">
                     <nav className="level">
                       <p className="level-item has-text-centered">
-                        <Link to="create" className="link is-info button">Add new sandwich</Link>
+                        <Sandwich__add />
                       </p>
                       <p className="level-item has-text-centered">
-                        <Link to="update" className="link is-info button">Update sandwich</Link>
+                        <Link to="/sandwiches/update" className="link is-info button">Update sandwich</Link>
                       </p>
                       <p className="level-item has-text-centered">
                         <img src="https://front-end-shop.pages.dev/assets/WoRZX-86840da7.png" alt="" style={{height: "100px"}} />
@@ -55,7 +50,7 @@ export default function Sandwich__display() {
                       </p>
                     </nav>
                     <div className="sandwich__display__page__sandwiches">
-                        {sandwiches.map((sandwich: any) => {
+                        {data && data.map((sandwich: any) => {
                             return (
                                 <div className="sandwich__display__page__container__sandwich">
                                     <div className="sandwich__display__page__container__sandwich__name">{sandwich.name}</div>
@@ -65,9 +60,9 @@ export default function Sandwich__display() {
                             )
                         })}
                     </div>
-                    {error !== "" ? (<Alert severity="error" className="error__message">{error}</Alert>) : (<></>)}
+                    {error && (<Alert severity="error" className="error__message">{error.message}</Alert>)}
                 </section>)
             }
-        </>
+        </QueryClientProvider>
     )
 }

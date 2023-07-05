@@ -1,4 +1,6 @@
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const request_url = "http://localhost:5000/server/internal";
 export const token_name = "token-yfjxhfdsjkjhdshkfdsfdsfd231ffds632f1sd65";
