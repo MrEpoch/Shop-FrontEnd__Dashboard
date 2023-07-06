@@ -52,7 +52,7 @@ export default function FormDialog() {
             margin="dense"
             id="name"
             label="Sandwich price"
-            type="number"
+            type="currency"
             fullWidth
             variant="standard"
           />
