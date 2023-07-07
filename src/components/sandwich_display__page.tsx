@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { GetSandwiches } from "../API_Requests";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Alert } from "@mui/material";
@@ -9,7 +8,6 @@ import Sandwich__add from "./create_sandwich__page.tsx";
 export const queryClient = new QueryClient();
 
 export default function Sandwich__display() {
-    const [loading, setLoading] = useState<boolean>(false);
 
     const {isLoading, error, data } = useQuery<any[], Error>('sandwiches', GetSandwiches);
 
@@ -28,14 +26,16 @@ export default function Sandwich__display() {
         )
     }
 
+    if (data) {
+        console.log(data);
+    }
+
     return (
         <QueryClientProvider client={queryClient}>
-            {loading ? (<div className="loading__container"><CircularProgress /></div>) :
+            {isLoading ? (<div className="loading__container"><CircularProgress /></div>) :
                 (<section className="sandwich__display__page">
                     <nav className="level">
-                      <p className="level-item has-text-centered">
                         <Sandwich__add />
-                      </p>
                       <p className="level-item has-text-centered">
                         <Link to="/sandwiches/update" className="link is-info button">Update sandwich</Link>
                       </p>
@@ -50,9 +50,9 @@ export default function Sandwich__display() {
                       </p>
                     </nav>
                     <div className="sandwich__display__page__sandwiches">
-                        {data && data.map((sandwich: any) => {
+                        {data && data.map((sandwich: any, index) => {
                             return (
-                                <div className="sandwich__display__page__container__sandwich">
+                                <div key={index} className="sandwich__display__page__container__sandwich">
                                     <div className="sandwich__display__page__container__sandwich__name">{sandwich.name}</div>
                                     <div className="sandwich__display__page__container__sandwich__description">{sandwich.description}</div>
                                     <div className="sandwich__display__page__container__sandwich__price">{sandwich.price}</div>

@@ -1,16 +1,12 @@
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route  } from 'react-router-dom';
 import LogIn__page from "./components/login__page.tsx";
 import CreateAccount__page from "./components/create_account__page.tsx";
 import Sandwich__display from './components/sandwich_display__page.tsx';
-import { VerifyToken } from "./API_Requests.ts";
+//import { token_refresh_name } from "./API_Requests.ts";
 import { ChildrenProp } from "./Types.ts";
 import Create_sandwich__page from './components/create_sandwich__page.tsx';
 
 export function ProtectRoute({children}: ChildrenProp) {
-
-    const navigate = useNavigate();
-
-    if (!VerifyToken()) navigate("/");
 
     return (
         <>
@@ -24,7 +20,7 @@ export default function Router() {
     return (
         <>
             <Routes>
-                <Route path="/" element={<Sandwich__display/>} />
+                <Route path="/" element={<LogIn__page />} />
                 <Route path="/sandwiches" element={
                     <ProtectRoute>
                         <Sandwich__display />
