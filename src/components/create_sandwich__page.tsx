@@ -8,6 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useState } from 'react';
 import { CreateSandwich } from '../API_Requests';
 import { Alert } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 export default function FormDialog() {
   const [open, setOpen] = useState(false);
@@ -42,7 +43,7 @@ export default function FormDialog() {
 
   return (
     <div className='level-item has-text-centered'>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      <Button variant="outlined" className="main-button__color " onClick={handleClickOpen}>
         Add new Sandwich
       </Button>
       {error !== "" ? (<Alert severity="error" className="error__auth">{error}</Alert>) : (<></>)}
@@ -83,7 +84,8 @@ export default function FormDialog() {
             fullWidth
             variant="standard"
           />
-        <div className="file is-primary">
+        <div className="file is-primary" style={{ gap: "2rem" }}>
+          {image_sandwich !== null ? (<p className="file-name">{image_sandwich.name}</p>) : (<></>)}
           <label className="file-label">
             <input  className="file-input" type="file" name="sandwich" onChange={(e) => {
                 if (e.target.files === null) { setError("Image cannot be empty"); return; }
@@ -92,7 +94,7 @@ export default function FormDialog() {
             />
             <span className="file-cta">
               <span className="file-icon">
-                <i className="fas fa-upload"></i>
+                <CloudUploadIcon />
               </span>
               <span className="file-label">
                 Sandwich Image

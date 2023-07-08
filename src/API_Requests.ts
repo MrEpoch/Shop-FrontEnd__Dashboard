@@ -65,18 +65,14 @@ export const CreateSandwich = async (name: string, description: string, price: s
         const formData = new FormData();
         formData.append("image", imageFile);
 
-        console.log(imageFile.name);
-        console.log(formData);
-        console.log(imageFile);
-
         const imagePromise = axios.post(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
-        const sandwichPromise = axios.post(request_auth_url + "/api/", { 
+        const sandwichPromise = axios.post(request_auth_url + "/api/",  { 
             name: name,
             description: description,
             price: price,
             image: imageFile.name
         }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
-
+'$2b$10$YT9XFfWhaaw/gWMFs0Hp..83J2j7wiuF4wF3YePCB5QnHSj7MPL8a'
         const [, sandwich] = await Promise.all([imagePromise, sandwichPromise]);
         return sandwich.data;
     } catch (e) {
@@ -85,15 +81,25 @@ export const CreateSandwich = async (name: string, description: string, price: s
     }
 }
 
-export const UpdateSandwich = async (id: string, name: string, description: string, price: number, image: File) => {
+export const UpdateSandwich = async (id: string, oldImageName: string, name: string, description: string, price: number, image: File) => {
     try {
-        const Valid_Image = new FormData();
-        Valid_Image.append(image.name, image);
-
+        const formData = new FormData();
+        formData.append("image", image);
+    
         const refresh_token = CryptoJS.AES.decrypt(localStorage.getItem(token_refresh_name), import.meta.env.VITE_TEMPORARY_TOKEN_HASHER_SECRET_KEY).toString(CryptoJS.enc.Utf8);
         const access_token = await axios.post(request_auth_url + "/token/", { token: refresh_token });
+        
+        const imagePromise = axios.put(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
+        const sandwichPromise = await axios.put(request_auth_url + "/api/" + id, { 
+            name: name,
+            description: description,
+            price: price,
+            image: image.name,
+            oldImage: oldImageName
+        }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } });
+        
+        const [, sandwich] = await Promise.all([imagePromise, sandwichPromise]);
 
-        const sandwich = await axios.put(request_auth_url + "/api/" + id, { id, name, description, price, Valid_Image }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } });
         return sandwich.data;
     } catch (e) {
         throw new Error("error")
