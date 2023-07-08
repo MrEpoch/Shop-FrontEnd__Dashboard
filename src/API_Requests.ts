@@ -72,7 +72,6 @@ export const CreateSandwich = async (name: string, description: string, price: s
             price: price,
             image: imageFile.name
         }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
-'$2b$10$YT9XFfWhaaw/gWMFs0Hp..83J2j7wiuF4wF3YePCB5QnHSj7MPL8a'
         const [, sandwich] = await Promise.all([imagePromise, sandwichPromise]);
         return sandwich.data;
     } catch (e) {
@@ -81,13 +80,22 @@ export const CreateSandwich = async (name: string, description: string, price: s
     }
 }
 
-export const UpdateSandwich = async (id: string, oldImageName: string, name: string, description: string, price: number, image: File) => {
+export const UpdateSandwich = async (id: string, oldImageName: string, name: string, description: string, price: string, isImage: boolean, image: File) => {
     try {
-        const formData = new FormData();
-        formData.append("image", image);
-    
         const refresh_token = CryptoJS.AES.decrypt(localStorage.getItem(token_refresh_name), import.meta.env.VITE_TEMPORARY_TOKEN_HASHER_SECRET_KEY).toString(CryptoJS.enc.Utf8);
         const access_token = await axios.post(request_auth_url + "/token/", { token: refresh_token });
+
+        if (!isImage) {
+            const sandwich = await axios.put(request_auth_url + "/api/no-image/" + id, {
+                name: name,
+                description: description,
+                price: price,
+                oldImage: oldImageName
+            }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } });
+            return sandwich.data;
+        }
+        const formData = new FormData();
+        formData.append("image", image);
         
         const imagePromise = axios.put(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
         const sandwichPromise = await axios.put(request_auth_url + "/api/" + id, { 

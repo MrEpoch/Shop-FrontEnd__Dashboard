@@ -53,14 +53,12 @@ export default function Sandwich__display() {
                 (<section className="sandwich__display__page">
                     <nav className="level sandwich__display__page_navbar">
                         <Sandwich__add />
-                      <p className="level-item has-text-centered">
                         <Sandwich__update sandwiches={data ? data : []} />
-                      </p>
                       <p className="level-item has-text-centered">
                         <img src="https://front-end-shop.pages.dev/assets/WoRZX-86840da7.png" alt="" style={{height: "100px"}} />
                       </p>
                       <p className="level-item has-text-centered">
-                        <Link to="create_account" className="link is-info button main-button__color ">Create new admin Account</Link>
+                        <Link to="/create_account" className="link is-info button main-button__color ">Create new admin Account</Link>
                       </p>
                       <p className="level-item has-text-centered">
                         <button onClick={Handle_log_out} className="button is-primary">Log Out</button>

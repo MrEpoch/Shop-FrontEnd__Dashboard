@@ -30,7 +30,7 @@ export default function FormDialog() {
   const handleAddSandwich = () => {
     try {
         if (image_sandwich === null) { setError("Image cannot be empty"); return; }
-        if (name.trim() === "" || description.trim() === "" || price === 0) { setError("Values are empty"); return; }
+        if (name.trim() === "" || description.trim() === "" || price === "0") { setError("Values are empty"); return; }
         CreateSandwich(name, description, price, image_sandwich);
         setOpen(false);
     } catch (e) {
@@ -48,8 +48,7 @@ export default function FormDialog() {
       </Button>
       {error !== "" ? (<Alert severity="error" className="error__auth">{error}</Alert>) : (<></>)}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add new sandwich</DialogTitle>
-        
+        <DialogTitle>Create sandwich</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Fill sandwich details
@@ -105,7 +104,7 @@ export default function FormDialog() {
      </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleAddSandwich}>Add new sandwich</Button>
+          <Button onClick={handleAddSandwich}>Create</Button>
         </DialogActions>
       </Dialog>
     </div>
