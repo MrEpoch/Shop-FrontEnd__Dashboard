@@ -18,6 +18,7 @@ export default function FormDialog() {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<string>("0");
+  const [stripeId, setStripeId] = useState<string>("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -31,7 +32,7 @@ export default function FormDialog() {
     try {
         if (image_sandwich === null) { setError("Image cannot be empty"); return; }
         if (name.trim() === "" || description.trim() === "" || price === "0") { setError("Values are empty"); return; }
-        CreateSandwich(name, description, price, image_sandwich);
+        CreateSandwich(name, description, price, image_sandwich, stripeId);
         setOpen(false);
     } catch (e) {
         console.log(e);
@@ -66,7 +67,7 @@ export default function FormDialog() {
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="description"
             label="Sandwich description"
             type="text"
             fullWidth
@@ -76,10 +77,20 @@ export default function FormDialog() {
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="price"
             label="Sandwich price"
             onChange={(e) => setPrice(e.target.value)}
             type="number"
+            fullWidth
+            variant="standard"
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="stripe_id"
+            label="Stripe price id"
+            onChange={(e) => setStripeId(e.target.value)}
+            type="password"
             fullWidth
             variant="standard"
           />

@@ -73,7 +73,7 @@ export default function Sandwich__display() {
                                     </div>
                                     <div className="sandwich__display__page__container__sandwich__name">{sandwich.name}</div>
                                     <div className="sandwich__display__page__container__sandwich__description">{sandwich.description}</div>
-                                    <div className="sandwich__display__page__container__sandwich__price">{sandwich.price}</div>
+                                    <div className="sandwich__display__page__container__sandwich__price">${sandwich.price}</div>
                                     <button onClick={() => handle_delete_sandwich(sandwich.id)} className="button is-primary">delete</button>
                                 </div>
                             )

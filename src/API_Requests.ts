@@ -57,20 +57,21 @@ export const GetSandwiches = async () => {
     }
 }
 
-export const CreateSandwich = async (name: string, description: string, price: string, imageFile: File) => {
+export const CreateSandwich = async (name: string, description: string, price: string, imageFile: File, stripeId: string) => {
     try {
         const refresh_token = CryptoJS.AES.decrypt(localStorage.getItem(token_refresh_name), import.meta.env.VITE_TEMPORARY_TOKEN_HASHER_SECRET_KEY).toString(CryptoJS.enc.Utf8);
         const access_token = await axios.post(request_auth_url + "/token/", { token: refresh_token });
 
         const formData = new FormData();
-        formData.append("image", imageFile);
-
+        formData.append("image", imageFile); 
+        const encrypted_stripe_id = CryptoJS.AES.encrypt(stripeId, import.meta.env.VITE_STRIPE_SECRET).toString();
         const imagePromise = axios.post(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
         const sandwichPromise = axios.post(request_auth_url + "/api/",  { 
             name: name,
             description: description,
             price: price,
-            image: imageFile.name
+            image: imageFile.name,
+            stripeId: encrypted_stripe_id
         }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
         const [, sandwich] = await Promise.all([imagePromise, sandwichPromise]);
         return sandwich.data;
@@ -80,12 +81,12 @@ export const CreateSandwich = async (name: string, description: string, price: s
     }
 }
 
-export const UpdateSandwich = async (id: string, oldImageName: string, name: string, description: string, price: string, isImage: boolean, image: File) => {
+export const UpdateSandwich = async (id: string, oldImageName: string, name: string, description: string, price: string, isImage: boolean, image: File | null) => {
     try {
         const refresh_token = CryptoJS.AES.decrypt(localStorage.getItem(token_refresh_name), import.meta.env.VITE_TEMPORARY_TOKEN_HASHER_SECRET_KEY).toString(CryptoJS.enc.Utf8);
         const access_token = await axios.post(request_auth_url + "/token/", { token: refresh_token });
 
-        if (!isImage) {
+        if (!isImage || image === null) {
             const sandwich = await axios.put(request_auth_url + "/api/no-image/" + id, {
                 name: name,
                 description: description,
