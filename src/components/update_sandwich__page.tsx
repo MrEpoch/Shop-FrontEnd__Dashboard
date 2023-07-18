@@ -22,7 +22,7 @@ export default function FormDialog(props: any) {
 
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [price, setPrice] = useState<string>("0");
+  const [price, setPrice] = useState<number>(0);
 
 
   useMemo(() => {
@@ -61,7 +61,7 @@ export default function FormDialog(props: any) {
         setError("");
         const old_image_name = chosen_sandwich.image.split("/")[chosen_sandwich.image.split("/").length - 1];
         console.log(name, description, price);
-        if (name.trim() === "" || description.trim() === "" || price === "0") { setError("Values are empty"); return; }
+        if (name.trim() === "" || description.trim() === "" || price === 0) { setError("Values are empty"); return; }
         if (is_image && image_sandwich === null) { setError("Image cannot be empty"); return; }
         else if (is_image && image_sandwich !== null) { 
             UpdateSandwich(chosen_sandwich.id, old_image_name, name, description, price, true,image_sandwich);
@@ -128,7 +128,7 @@ export default function FormDialog(props: any) {
                     
                     <TextField autoFocus margin="dense" id="name" label="Sandwich name" fullWidth variant="standard" defaultValue={chosen_sandwich.name} onChange={(e: any) => setName(e.target.value)} />
                     <TextField autoFocus margin="dense" id="name" label="Sandwich name" fullWidth variant="standard" defaultValue={chosen_sandwich.description} onChange={(e: any) => setDescription(e.target.value)} />
-                    <TextField autoFocus margin="dense" id="name" label="Sandwich name" fullWidth variant="standard" defaultValue={chosen_sandwich.price} onChange={(e: any) => setPrice(e.target.value)} />
+                    <TextField autoFocus margin="dense" id="name" label="Sandwich name" fullWidth variant="standard" defaultValue={chosen_sandwich.price} onChange={(e: any) => setPrice(parseFloat(e.target.value))} />
                     {is_image &&
                         (
                             <div className="file is-primary" style={{ gap: "2rem" }}>

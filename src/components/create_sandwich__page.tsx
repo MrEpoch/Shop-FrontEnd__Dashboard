@@ -17,7 +17,7 @@ export default function FormDialog() {
 
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [price, setPrice] = useState<string>("0");
+  const [price, setPrice] = useState<number>(0);
   const [stripeId, setStripeId] = useState<string>("");
 
   const handleClickOpen = () => {
@@ -28,11 +28,11 @@ export default function FormDialog() {
     setOpen(false);
   };
 
-  const handleAddSandwich = () => {
+  const handleAddSandwich = async () => {
     try {
         if (image_sandwich === null) { setError("Image cannot be empty"); return; }
-        if (name.trim() === "" || description.trim() === "" || price === "0") { setError("Values are empty"); return; }
-        CreateSandwich(name, description, price, image_sandwich, stripeId);
+        if (name.trim() === "" || description.trim() === "" || price === 0) { setError("Values are empty"); return; }
+        await CreateSandwich(name, description, price, image_sandwich, stripeId);
         setOpen(false);
     } catch (e) {
         console.log(e);
@@ -79,7 +79,7 @@ export default function FormDialog() {
             margin="dense"
             id="price"
             label="Sandwich price"
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={(e) => setPrice(parseFloat(e.target.value))}
             type="number"
             fullWidth
             variant="standard"

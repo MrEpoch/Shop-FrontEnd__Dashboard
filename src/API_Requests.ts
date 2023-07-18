@@ -1,4 +1,5 @@
 import axios from "axios";
+import imageCompression from "browser-image-compression";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import CryptoJS from "crypto-js";
@@ -57,13 +58,21 @@ export const GetSandwiches = async () => {
     }
 }
 
-export const CreateSandwich = async (name: string, description: string, price: string, imageFile: File, stripeId: string) => {
+export const CreateSandwich = async (name: string, description: string, price: number, imageFile: File, stripeId: string) => {
     try {
         const refresh_token = CryptoJS.AES.decrypt(localStorage.getItem(token_refresh_name), import.meta.env.VITE_TEMPORARY_TOKEN_HASHER_SECRET_KEY).toString(CryptoJS.enc.Utf8);
         const access_token = await axios.post(request_auth_url + "/token/", { token: refresh_token });
 
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        }
+
+        const compressedFile = await imageCompression(imageFile, options);
+
         const formData = new FormData();
-        formData.append("image", imageFile); 
+        formData.append("image", compressedFile);
         const encrypted_stripe_id = CryptoJS.AES.encrypt(stripeId, import.meta.env.VITE_STRIPE_SECRET).toString();
         const imagePromise = axios.post(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
         const sandwichPromise = axios.post(request_auth_url + "/api/",  { 
@@ -81,7 +90,7 @@ export const CreateSandwich = async (name: string, description: string, price: s
     }
 }
 
-export const UpdateSandwich = async (id: string, oldImageName: string, name: string, description: string, price: string, isImage: boolean, image: File | null) => {
+export const UpdateSandwich = async (id: string, oldImageName: string, name: string, description: string, price: number, isImage: boolean, image: File | null) => {
     try {
         const refresh_token = CryptoJS.AES.decrypt(localStorage.getItem(token_refresh_name), import.meta.env.VITE_TEMPORARY_TOKEN_HASHER_SECRET_KEY).toString(CryptoJS.enc.Utf8);
         const access_token = await axios.post(request_auth_url + "/token/", { token: refresh_token });
@@ -95,8 +104,17 @@ export const UpdateSandwich = async (id: string, oldImageName: string, name: str
             }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } });
             return sandwich.data;
         }
+
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        }
+
+        const compressedFile = await imageCompression(image, options);
+
         const formData = new FormData();
-        formData.append("image", image);
+        formData.append("image", compressedFile);
         
         const imagePromise = axios.put(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
         const sandwichPromise = await axios.put(request_auth_url + "/api/" + id, { 
