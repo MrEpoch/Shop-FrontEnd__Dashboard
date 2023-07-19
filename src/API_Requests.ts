@@ -1,10 +1,9 @@
 import axios from "axios";
-import imageCompression from "browser-image-compression";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import CryptoJS from "crypto-js";
 
-export const request_auth_url = "http://localhost:4528/auth";
+export const request_auth_url = "https://stencukpage.com/auth";
 
 export const token_refresh_name = '76c555d2dffd72d19e7eea4a3d37d312d138981bb2e8e947dc3ab04b4c0cc6ad80e2232d25ad790d971845946040f1f810fb65ff687ddad9726b833e7780b6d0';
 
@@ -63,16 +62,8 @@ export const CreateSandwich = async (name: string, description: string, price: n
         const refresh_token = CryptoJS.AES.decrypt(localStorage.getItem(token_refresh_name), import.meta.env.VITE_TEMPORARY_TOKEN_HASHER_SECRET_KEY).toString(CryptoJS.enc.Utf8);
         const access_token = await axios.post(request_auth_url + "/token/", { token: refresh_token });
 
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-        }
-
-        const compressedFile = await imageCompression(imageFile, options);
-
         const formData = new FormData();
-        formData.append("image", compressedFile);
+        formData.append("image", imageFile); 
         const encrypted_stripe_id = CryptoJS.AES.encrypt(stripeId, import.meta.env.VITE_STRIPE_SECRET).toString();
         const imagePromise = axios.post(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
         const sandwichPromise = axios.post(request_auth_url + "/api/",  { 
@@ -104,17 +95,8 @@ export const UpdateSandwich = async (id: string, oldImageName: string, name: str
             }, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } });
             return sandwich.data;
         }
-
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-        }
-
-        const compressedFile = await imageCompression(image, options);
-
         const formData = new FormData();
-        formData.append("image", compressedFile);
+        formData.append("image", image);
         
         const imagePromise = axios.put(request_auth_url + "/api/image", formData, { headers: { Authorization: `Bearer ${access_token.data.ACCESS_TOKEN}` } })
         const sandwichPromise = await axios.put(request_auth_url + "/api/" + id, { 
